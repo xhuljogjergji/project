@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,42 +22,45 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final RoomCategoryRepository roomCategoryRepository;
     @Override
-    public List<RoomDTO> getAllRooms() {
-        return roomRepository.findAll()
-                .stream()
-                .map(RoomMapper::toDto)
-                .collect(Collectors.toList());
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
     }
-
+    @Override
+    public Room saveRoom(Room room) {
+        return roomRepository.save(room);
+    }
     @Override
     public Room getRoomById(Integer id) {
+//        Optional<Room> room=roomRepository.findById(id);
+//        if(room.isPresent()) {
+//            return room.get();
+//            }else{
+//            throw new ResourceNotFoundException(String
+//                        .format("Room with id %s not found",id));
+//        }
         return roomRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException(String
                         .format("Room with id %s not found",id)));
     }
-
     @Override
-    public Room getRoom(RoomDTO roomDTO,Integer id) {
-        return roomRepository.findById(id)
+    public Room updateRoom(Integer id, Room room) {
+    Room room1=roomRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException(String
                         .format("Room with id %s not found",id)));
+    room1.setName(room.getName());
+    room1.setCapacity(room.getCapacity());
+    room1.setAvailable(room.isAvailable());
+    room1.setPricePerNight(room.getPricePerNight());
+    roomRepository.save(room1);
+        return room1;
     }
 
     @Override
-    public RoomDTO updateRoom(Integer id, RoomUpdateDTO req) {
-        Room toUpdate=roomRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(String
-                        .format("Room with id %s not found",id)));
-        return RoomMapper.toDto(roomRepository.save(RoomMapper.toEntityUpdate(toUpdate,req)));
-    }
-
-    @Override
-    public  Room deleteRoom(Integer id) {
-Room r=roomRepository.findById(id)
+    public  void deleteRoom(Integer id) {
+    Room r=roomRepository.findById(id)
         .orElseThrow(()->new ResourceNotFoundException(String
                 .format("Room with id %s not found",id)));
-roomRepository.delete(r);
-return null;
+     roomRepository.delete(r);
     }
 
     @Override

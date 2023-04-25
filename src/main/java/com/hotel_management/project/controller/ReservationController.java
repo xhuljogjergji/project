@@ -5,8 +5,6 @@ import com.hotel_management.project.entity.Reservation;
 import com.hotel_management.project.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestControllerAdvice

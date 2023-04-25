@@ -7,14 +7,11 @@ import com.hotel_management.project.entity.room.Room;
 import java.util.List;
 
 public interface RoomService {
-    List<RoomDTO> getAllRooms();
-
+    List<Room> getAllRooms();
+    Room saveRoom(Room room);
     Room getRoomById(Integer id);
-    Room getRoom(RoomDTO roomDTO,Integer id);
-
-    RoomDTO updateRoom(Integer id, RoomUpdateDTO req);
-
-    Room deleteRoom(Integer id);
+    Room updateRoom(Integer id, Room room);
+    void deleteRoom(Integer id);
 
     RoomDTO addRoom(Integer id,RoomDTO req);
 }

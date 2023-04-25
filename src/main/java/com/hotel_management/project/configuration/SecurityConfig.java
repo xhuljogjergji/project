@@ -62,11 +62,10 @@ public class SecurityConfig {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers("/auth/**")
+                .antMatchers("/**")
                 .permitAll()
                 // Our private endpoints
-                .anyRequest()
-                .authenticated()
+
                 // Set up oauth2 resource server
                 .and()
                 .httpBasic(Customizer.withDefaults())

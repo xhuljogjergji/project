@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,30 +20,48 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     @Override
-    public Optional<User> findById(Integer id) {
-        return Optional.ofNullable(userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String
-                        .format("User with id %snot found", id))));
-
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserDTO registerUser(UserDTO req, String userRole) {
-        User u = UserMapper.toEntity(req);
-        u.setRole(userRole != null ? UserRole.fromValue(userRole) : UserRole.GUEST);
-        u.setPassword(passwordEncoder.encode(req.getPassword()));
-        u = userRepository.save(u);
-        return UserMapper.toDto(u);
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public UserUpdateDTO updateUser(Integer id, UserUpdateDTO req) {
-        User u = findById(id).get();
-        u = UserMapper.buildUpdateUser(u, req);
-        return UserMapper.toUpdateDto(userRepository.save(u));
+    public User getUserById(Integer id) {
+//        Optional<User> user=userRepository.findById(id);
+//        if (user.isPresent()){
+//            return user.get();
+//        }else {
+//            throw new ResourceNotFoundException(String.format("User with id %snot found", id));
+//        }
+        return userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(String.
+                format("User with id %snot found", id)));
+    }
+
+
+    @Override
+    public User updateUser(User user, Integer id) {
+        User user1=userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(String.
+                format("User with id %snot found", id)));
+        user1.setFirstName(user.getFirstName());
+        user1.setLastName(user.getLastName());
+        user1.setEmail(user.getEmail());
+        user1.setPassword(user.getPassword());
+        user1.setPhoneNo(user.getPhoneNo());
+        userRepository.save(user1);
+        return user1;
+    }
+
+    @Override
+    public void deleteUser(Integer id) {
+        userRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException(String
+                        .format("User with id %s not found",id)));
+        userRepository.deleteById(id);
     }
 
 

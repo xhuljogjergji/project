@@ -5,6 +5,7 @@ import com.hotel_management.project.dto.room.RoomUpdateDTO;
 import com.hotel_management.project.entity.room.Room;
 import com.hotel_management.project.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +19,17 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @GetMapping("/{id}")
-    public List<RoomDTO> getAllRooms() {
+    @GetMapping()
+   public List<Room>getAllRooms(){
         return roomService.getAllRooms();
     }
-
-    @GetMapping("/{id}/test")
-    public Optional<Room> getRoomById(@PathVariable Integer id) {
-        return Optional.ofNullable(roomService.getRoomById(id));
+    @PostMapping()
+    public ResponseEntity<Room>saveRoom(@RequestBody Room room){
+        return new ResponseEntity<Room>(roomService.saveRoom(room),HttpStatus.CREATED);
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<Room> getRoomById(@PathVariable("id") Integer id) {
+        return new ResponseEntity<Room>(roomService.getRoomById(id), HttpStatus.OK);
     }
     @RolesAllowed("ADMIN")
     @PostMapping("/admin/{id}")
@@ -34,14 +38,13 @@ public class RoomController {
         return ResponseEntity.ok(roomService.addRoom(categoryId,req));
     }
     @RolesAllowed("ADMIN")
-    @PutMapping("/admin/ {id}")
-    public RoomDTO updateRoom(@PathVariable Integer id, @RequestBody RoomUpdateDTO req) {
-        return roomService.updateRoom(id, req);
-    }
-
-    @RolesAllowed("ADMIN")
-    @DeleteMapping("/admin/rooms/{id}")
-    public void deleteRoom(@PathVariable Integer id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteRoom(@PathVariable Integer id) {
         roomService.deleteRoom(id);
+        return new ResponseEntity<String>("Room deleted successfully",HttpStatus.OK);
+    }
+    @PutMapping("{id}")
+    public ResponseEntity<Room>updateRoom(@PathVariable("id")Integer id,@RequestBody Room room){
+        return new ResponseEntity<Room>(roomService.updateRoom(id,room),HttpStatus.OK);
     }
 }
