@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface InvoiceService {
    Invoice findById(Integer id);
 
-    InvoiceDTO deleteInvoiceById(Integer id);
-    InvoiceDTO updateInvoice(Integer id, InvoiceDTO invoiceDTO);
-
+    void deleteInvoiceById(Integer id);
     Optional<Invoice> getInvoiceById(Integer id);
 }

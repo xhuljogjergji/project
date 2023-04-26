@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Optional;
-@RestControllerAdvice
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/rooms")
+@RequestMapping("/api/rooms")
 public class RoomController {
-
     private final RoomService roomService;
-
     @GetMapping()
    public List<Room>getAllRooms(){
         return roomService.getAllRooms();
@@ -47,4 +45,9 @@ public class RoomController {
     public ResponseEntity<Room>updateRoom(@PathVariable("id")Integer id,@RequestBody Room room){
         return new ResponseEntity<Room>(roomService.updateRoom(id,room),HttpStatus.OK);
     }
+    @RolesAllowed("ADMIN")
+    @GetMapping("/available/{id}")
+    public ResponseEntity<Boolean>isRoomAvailable(@PathVariable("id")Integer id){
+        return ResponseEntity.ok(roomService.isRoomAvailable(id));
+}
 }

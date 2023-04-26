@@ -71,4 +71,15 @@ public class RoomServiceImpl implements RoomService {
 
         return RoomMapper.toDto(roomRepository.save(RoomMapper.toEntityRoom(req,roomCategory)));
     }
+
+    @Override
+    public Boolean isRoomAvailable(Integer id) {
+        Room room=roomRepository.findById(id)
+                .map(r->{
+                    r.setAvailable(r.isAvailable()?false:true);
+                    return r;
+                }).map(roomRepository::save) .orElseThrow(()->new ResourceNotFoundException(String
+                        .format("Room with id %s not found",id)));
+        return room.isAvailable();
+    }
 }
