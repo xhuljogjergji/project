@@ -1,6 +1,10 @@
 package com.hotel_management.project.entity;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.hotel_management.project.entity.room.Room;
 import com.hotel_management.project.entity.user.User;
 import lombok.AllArgsConstructor;
@@ -24,10 +28,14 @@ public class Reservation {
     @ManyToOne(optional = false)
     private Room room;
 
-    @Column(nullable = false)
+    @Column
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate checkInDate;
 
-    @Column(nullable = false)
+    @Column
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate checkOutDate;
 
     @Column(nullable = false)
@@ -35,18 +43,10 @@ public class Reservation {
 
     @ManyToOne(optional = false)
     private User user;
-
-    public Reservation(Room room,
-                       LocalDate checkInDate,
-                       LocalDate checkOutDate,
-                       int numberOfGuests,
-                       User user) {
-        this.room = room;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-        this.numberOfGuests = numberOfGuests;
-        this.user = user;
-    }
+    private String reservationName;
+    private String customerEmail;
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus;
 
     @Override
     public String toString() {
@@ -57,6 +57,20 @@ public class Reservation {
                 ", checkOutDate=" + checkOutDate +
                 ", numberOfGuests=" + numberOfGuests +
                 ", user=" + user +
+                ", reservationName='" + reservationName + '\'' +
+                ", customerEmail='" + customerEmail + '\'' +
                 '}';
     }
+
+    public Reservation(Room room, LocalDate checkInDate, LocalDate checkOutDate,
+                       int numberOfGuests, User user, String reservationName, String customerEmail) {
+        this.room = room;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.numberOfGuests = numberOfGuests;
+        this.user = user;
+        this.reservationName = reservationName;
+        this.customerEmail = customerEmail;
+    }
+
 }

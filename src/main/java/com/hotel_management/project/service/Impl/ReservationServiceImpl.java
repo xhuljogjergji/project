@@ -1,51 +1,53 @@
 package com.hotel_management.project.service.Impl;
 
+import com.hotel_management.project.dto.CheckOutDTO;
+import com.hotel_management.project.dto.ReservationDTO;
 import com.hotel_management.project.entity.Reservation;
+import com.hotel_management.project.entity.ReservationStatus;
+import com.hotel_management.project.entity.user.User;
 import com.hotel_management.project.exception.ResourceNotFoundException;
+import com.hotel_management.project.mapper.ReservationMapper;
 import com.hotel_management.project.repository.ReservationRepository;
+import com.hotel_management.project.service.PaymentService;
 import com.hotel_management.project.service.ReservationService;
+import com.hotel_management.project.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     private  final ReservationRepository reservationRepository;
+private final PaymentService paymentService;
+private final UserService userService;
+
     @Override
-    public Reservation saveReservation(Reservation reservation) {
-        return reservationRepository.save(reservation);
+    public List<ReservationDTO> getReservations() {
+        return reservationRepository.findAll().stream()
+                .map(ReservationMapper::toDto).collect(Collectors.toList());
+
     }
+
     @Override
-    public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
+    public List<ReservationDTO> getReservationsByCustomerId(String email) {
+        return reservationRepository.findAllByCustomerEmail(email)
+                .stream().map(ReservationMapper::toDto).collect(Collectors.toList());
+
     }
+
     @Override
-    public Reservation getReservationById(Integer id) {
-        return reservationRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(String
-                        .format("Reservation not found",id)));
-    }
-    @Override
-    public Reservation updateReservation(Integer id, Reservation reservation) {
-        Reservation reservation1= reservationRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(String
-                        .format("Reservation not found",id)));
-        reservation1.setRoom(reservation.getRoom());
-        reservation1.setCheckInDate(reservation.getCheckInDate());
-        reservation1.setCheckOutDate(reservation.getCheckOutDate());
-        reservation1.setUser(reservation.getUser());
-        reservation1.setNumberOfGuests(reservation.getNumberOfGuests());
-        return reservation1;
-    }
-    @Override
-    public void deleteReservation(Integer id) {
-        Reservation re=reservationRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(String
-                        .format("Reservation not found",id)));
-        reservationRepository.delete(re);
+    public Void setReservationStatus(Integer reservationId, String status) {
+        reservationRepository.findById(reservationId)
+                .map(res-> {
+                    res.setReservationStatus(ReservationStatus.fromValue(status));
+                    return reservationRepository.save(res);
+                }).orElseThrow(()->new ResourceNotFoundException("reservation not found"));
+        return null;
     }
 
     @Override
@@ -58,16 +60,21 @@ public class ReservationServiceImpl implements ReservationService {
                         .format("Reservation not found",id)));
         return reservation.getCheckInDate();
     }
-//TODO:add plus days
     @Override
-    public LocalDate getCheckOutDate(LocalDate localDate,Integer id) {
+    public LocalDate getCheckOutDate(long stayingDays,LocalDate localDate,Integer id) {
         Reservation reservation=reservationRepository.findById(id)
                 .map(res -> {
                     res.setCheckOutDate(LocalDate.from(getCheckInDate(id)));
                     return res;
-                }).map(reservationRepository::save) .orElseThrow(()->new ResourceNotFoundException(String
+                }).map(reservationRepository::save)
+                .orElseThrow(()->new ResourceNotFoundException(String
                 .format("Reservation not found",id)));
-        return reservation.getCheckOutDate();
+        return reservation.getCheckOutDate().plusDays(stayingDays);
+    }
+
+    @Override
+    public ReservationDTO processOrder(Jwt jwt, CheckOutDTO ch) {
+        return null;
     }
 
 }

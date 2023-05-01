@@ -11,4 +11,5 @@ public interface InvoiceService {
 
     void deleteInvoiceById(Integer id);
     Optional<Invoice> getInvoiceById(Integer id);
+    InvoiceDTO getInvoice();
 }

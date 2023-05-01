@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 @RestControllerAdvice
 @RequiredArgsConstructor
-@RequestMapping("/invoices")
+@RequestMapping("/api/invoices")
 public class InvoiceController {
 private final InvoiceService invoiceService;
     @GetMapping("/{id}")
@@ -20,8 +20,5 @@ private final InvoiceService invoiceService;
     public void deleteInvoice(@PathVariable Integer id) {
         invoiceService.deleteInvoiceById(id);
     }
-    @GetMapping("{id}")
-    public ResponseEntity<Invoice>getInvoiceById(@PathVariable("id")Integer id){
-        return new ResponseEntity<Invoice>(invoiceService.getInvoiceById(id).get(), HttpStatus.OK);
-    }
+
 }

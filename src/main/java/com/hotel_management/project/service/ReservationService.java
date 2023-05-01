@@ -1,17 +1,20 @@
 package com.hotel_management.project.service;
 
+import com.hotel_management.project.dto.CheckOutDTO;
+import com.hotel_management.project.dto.ReservationDTO;
 import com.hotel_management.project.entity.Reservation;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
-    Reservation saveReservation(Reservation reservation);
-    List<Reservation>getAllReservations();
-    Reservation getReservationById(Integer id);
-    Reservation updateReservation(Integer id, Reservation reservation);
-    void deleteReservation(Integer id);
+    List<ReservationDTO> getReservations();
+    List<ReservationDTO>  getReservationsByCustomerId(String email);
+    Void setReservationStatus(Integer reservationId,String status);
     LocalDate getCheckInDate(Integer id);
-    LocalDate getCheckOutDate(LocalDate localDate,Integer id);
+    LocalDate getCheckOutDate(long stayingDays,LocalDate localDate,Integer id);
+
+    ReservationDTO processOrder(Jwt jwt, CheckOutDTO ch);
 }
 

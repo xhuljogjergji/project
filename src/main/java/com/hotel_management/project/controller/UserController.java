@@ -19,9 +19,11 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-    @PostMapping()
-    public ResponseEntity<User>saveUser(@RequestBody User user){
-        return new ResponseEntity<User>(userService.saveUser(user), HttpStatus.CREATED);
+    @RolesAllowed("ADMIN")
+    @PostMapping("/admin/{userRole}")
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO req, @PathVariable String userRole){
+        UserDTO dto = userService.registerUser(req,userRole);
+        return ResponseEntity.ok(dto);
     }
     @GetMapping
     public List<User>getAllUsers(){
@@ -33,11 +35,13 @@ public class UserController {
         return new ResponseEntity<User>(userService.getUserById(id),HttpStatus.OK);
     }
 //    http://localhost:8080/api/users/1
-    @PutMapping("{id}")
-    public ResponseEntity<User>updateUser(@PathVariable("id")Integer id
-                                            ,@RequestBody User user){
-        return new ResponseEntity<User>(userService.updateUser(user,id),HttpStatus.OK);
-    }
+    @RolesAllowed("ADMIN")
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<UserUpdateDTO> updateUser(@PathVariable Integer id,
+                                                    @RequestBody UserUpdateDTO req){
+        UserUpdateDTO u = userService.updateUser(req,id);
+        return ResponseEntity.ok(u);
+}
     //    http://localhost:8080/api/users/1
 @DeleteMapping("{id}")
     public ResponseEntity<String>deleteUser(@PathVariable("id")Integer id){

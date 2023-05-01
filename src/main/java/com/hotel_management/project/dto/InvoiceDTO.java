@@ -18,4 +18,5 @@ public class InvoiceDTO {
     private boolean paid;
 
     private ReservationDTO reservation;
+    private int stayingDays;
 }

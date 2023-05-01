@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,Integer> {
+    List<Reservation> findAllByCustomerEmail(String email);
+
     List<Reservation> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate);
 
     List<Reservation> findByCheckOutDateBetween(LocalDate startDate, LocalDate endDate);

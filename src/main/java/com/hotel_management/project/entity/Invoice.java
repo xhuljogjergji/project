@@ -21,7 +21,6 @@ public class Invoice{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column(nullable = false)
     private BigDecimal amount;
 
@@ -33,12 +32,14 @@ public class Invoice{
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
+    private int stayingdays;
 
-    public Invoice(BigDecimal amount, boolean paid, Reservation reservation, User user) {
+    public Invoice(BigDecimal amount, boolean paid, Reservation reservation, User user,int stayingdays) {
         this.amount = amount;
         this.paid = paid;
         this.reservation = reservation;
       this.user=user;
+      this.stayingdays=stayingdays;
     }
 
     @Override

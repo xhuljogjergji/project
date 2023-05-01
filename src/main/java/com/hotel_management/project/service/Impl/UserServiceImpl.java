@@ -10,6 +10,7 @@ import com.hotel_management.project.repository.UserRepository;
 import com.hotel_management.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +21,26 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException(String
+                        .format("User with id %s not found",id)));
+    }
+
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public UserDTO registerUser(UserDTO req,String userRole) {
+        User u=UserMapper.toEntity(req);
+        u.setRole(userRole!=null?UserRole.fromValue(userRole):UserRole.GUEST);
+        u.setPassword(passwordEncoder.encode(req.getPassword()));
+        u = userRepository.save(u);
+        return UserMapper.toDto(u);
     }
 
     @Override
@@ -44,16 +57,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUser(User user, Integer id) {
-        User user1=userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(String.
-                format("User with id %snot found", id)));
-        user1.setFirstName(user.getFirstName());
-        user1.setLastName(user.getLastName());
-        user1.setEmail(user.getEmail());
-        user1.setPassword(user.getPassword());
-        user1.setPhoneNo(user.getPhoneNo());
-        userRepository.save(user1);
-        return user1;
+    public UserUpdateDTO updateUser(UserUpdateDTO req, Integer id) {
+        User u = findById(id);
+        u = UserMapper.buildUpdateUser(u,req);
+        return UserMapper.toUpdateDto(userRepository.save(u));
     }
 
     @Override
@@ -62,6 +69,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new ResourceNotFoundException(String
                         .format("User with id %s not found",id)));
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User getUserFromToken(Jwt jwt) {
+        String sub = (String) jwt.getClaims().get("sub");
+        return userRepository.findByEmail(sub).get();
     }
 
 

@@ -72,5 +72,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid UserDTO u){
+        return ResponseEntity.ok(userService.registerUser(u,null));
+    }
 }

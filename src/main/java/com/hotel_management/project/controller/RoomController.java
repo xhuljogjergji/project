@@ -3,6 +3,7 @@ package com.hotel_management.project.controller;
 import com.hotel_management.project.dto.room.RoomDTO;
 import com.hotel_management.project.dto.room.RoomUpdateDTO;
 import com.hotel_management.project.entity.room.Room;
+import com.hotel_management.project.mapper.RoomMapper;
 import com.hotel_management.project.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,37 +18,35 @@ import java.util.Optional;
 @RequestMapping("/api/rooms")
 public class RoomController {
     private final RoomService roomService;
-    @GetMapping()
-   public List<Room>getAllRooms(){
-        return roomService.getAllRooms();
+    @GetMapping("/{id}")
+    public ResponseEntity<RoomDTO> findById(@PathVariable Integer id){
+        RoomDTO r = RoomMapper.toDto(roomService.findById(id));
+        return ResponseEntity.ok(r);
     }
-    @PostMapping()
-    public ResponseEntity<Room>saveRoom(@RequestBody Room room){
-        return new ResponseEntity<Room>(roomService.saveRoom(room),HttpStatus.CREATED);
+
+    @GetMapping("/list")
+    public ResponseEntity<List<RoomDTO>> findAllRooms(){
+        return ResponseEntity.ok(roomService.findAll());
     }
-    @GetMapping("{id}")
-    public ResponseEntity<Room> getRoomById(@PathVariable("id") Integer id) {
-        return new ResponseEntity<Room>(roomService.getRoomById(id), HttpStatus.OK);
-    }
+
+
     @RolesAllowed("ADMIN")
-    @PostMapping("/admin/{id}")
-    public ResponseEntity<RoomDTO> addRoom(@PathVariable Integer categoryId,
-                                           @RequestBody RoomDTO req ){
+    @PostMapping("/admin/{categoryId}")
+    public ResponseEntity<RoomDTO> addRooms(@PathVariable Integer categoryId,
+                                                 @RequestBody RoomDTO req ){
         return ResponseEntity.ok(roomService.addRoom(categoryId,req));
     }
+
     @RolesAllowed("ADMIN")
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteRoom(@PathVariable Integer id) {
-        roomService.deleteRoom(id);
-        return new ResponseEntity<String>("Room deleted successfully",HttpStatus.OK);
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<RoomDTO> updateProduct(@PathVariable Integer id,
+                                                 @RequestBody RoomUpdateDTO req ){
+        return ResponseEntity.ok(roomService.updateRoom(id,req));
     }
-    @PutMapping("{id}")
-    public ResponseEntity<Room>updateRoom(@PathVariable("id")Integer id,@RequestBody Room room){
-        return new ResponseEntity<Room>(roomService.updateRoom(id,room),HttpStatus.OK);
-    }
+
     @RolesAllowed("ADMIN")
-    @GetMapping("/available/{id}")
-    public ResponseEntity<Boolean>isRoomAvailable(@PathVariable("id")Integer id){
-        return ResponseEntity.ok(roomService.isRoomAvailable(id));
-}
+    @GetMapping("/admin/{id}/status")
+    public ResponseEntity<Boolean> setRoomStatus(@PathVariable Integer id){
+        return ResponseEntity.ok(roomService.setRoomStatus(id));
+    }
 }

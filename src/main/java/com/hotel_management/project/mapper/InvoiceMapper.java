@@ -9,6 +9,7 @@ public class InvoiceMapper {
                 .id(in.getId())
                 .paid(in.isPaid())
                 .amount(in.getAmount())
+                .stayingDays(in.getStayingdays())
                 .build();
     }
 }

@@ -1,52 +1,48 @@
 package com.hotel_management.project.controller;
 
+import com.hotel_management.project.dto.CheckOutDTO;
+import com.hotel_management.project.dto.InvoiceDTO;
 import com.hotel_management.project.dto.ReservationDTO;
 import com.hotel_management.project.entity.Reservation;
+import com.hotel_management.project.service.InvoiceService;
 import com.hotel_management.project.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reservations")
 public class ReservationController {
-    private final ReservationService reservationService;
+private final ReservationService reservationService;
+private final InvoiceService invoiceService;
+@GetMapping("/invoice")
+public ResponseEntity<InvoiceDTO>getInvoice()
+{return ResponseEntity.ok(invoiceService.getInvoice());}
 
-    @PostMapping()
-    public ResponseEntity<Reservation> saveReservation(@RequestBody Reservation reservation) {
-        return new ResponseEntity<Reservation>
-                (reservationService.saveReservation(reservation), HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<ReservationDTO> createReservation(@AuthenticationPrincipal Jwt jwt,
+                                                      @RequestBody CheckOutDTO ch){
+        return ResponseEntity.ok(reservationService.processOrder(jwt,ch));
     }
 
-    @GetMapping
-    public List<Reservation> getAllReservations() {
-        return reservationService.getAllReservations();
+    @GetMapping("/{email}")
+    public ResponseEntity<List<ReservationDTO>> getReservationByCustomerEmail
+            (@PathVariable String email){
+        return ResponseEntity.ok(reservationService.getReservationsByCustomerId(email));
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable("id") Integer id) {
-        return new ResponseEntity<Reservation>(reservationService.getReservationById(id), HttpStatus.OK);
+    @GetMapping("/{orderId}/{orderStatus}")
+    public ResponseEntity<Void> setReservationStatus(@PathVariable Integer reservationId
+            ,@PathVariable String reservationStatus){
+        return ResponseEntity.ok(reservationService.setReservationStatus(reservationId,reservationStatus));
     }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteReservation(@PathVariable Integer id) {
-        reservationService.deleteReservation(id);
-        return new ResponseEntity<String>("Reservation canceled successfully", HttpStatus.OK);
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable("id") Integer id,
-                                                         @RequestBody Reservation reservation) {
-        return new ResponseEntity<Reservation>(reservationService.updateReservation(id, reservation)
-                , HttpStatus.OK);
-    }
-
     @GetMapping({"id"})
     public ResponseEntity<LocalDate> getCheckInDate(@PathVariable("id") Integer id,
                                                     @RequestBody Reservation reservation) {
@@ -56,7 +52,8 @@ public class ReservationController {
 //    @GetMapping({"id"})
 //    public ResponseEntity<LocalDate>getCheckOutDate(@PathVariable("id")Integer id,
 //                                                    @RequestBody Reservation reservation){
-//        return new ResponseEntity<LocalDate>(reservationService);
-//
+//        return new ResponseEntity<LocalDate>(reservationService
+//                .getCheckOutDate(id,localDate),HttpStatus.OK);
+
 //    }
 }
