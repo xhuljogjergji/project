@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
-import java.util.List;
 
 
 @RestController
@@ -29,16 +28,16 @@ public ResponseEntity<InvoiceDTO>getInvoice()
     @PostMapping
     public ResponseEntity<ReservationDTO> createReservation(@AuthenticationPrincipal Jwt jwt,
                                                       @RequestBody CheckOutDTO ch){
-        return ResponseEntity.ok(reservationService.processOrder(jwt,ch));
+        return ResponseEntity.ok(reservationService.processReservation(jwt,ch));
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<List<ReservationDTO>> getReservationByCustomerEmail
+    public ResponseEntity<Integer> getReservationByCustomerEmail
             (@PathVariable String email){
         return ResponseEntity.ok(reservationService.getReservationsByCustomerId(email));
     }
 
-    @GetMapping("/{orderId}/{orderStatus}")
+    @GetMapping("/{reservationID}/{reservationStatus}")
     public ResponseEntity<Void> setReservationStatus(@PathVariable Integer reservationId
             ,@PathVariable String reservationStatus){
         return ResponseEntity.ok(reservationService.setReservationStatus(reservationId,reservationStatus));
@@ -50,10 +49,8 @@ public ResponseEntity<InvoiceDTO>getInvoice()
     }
 
 //    @GetMapping({"id"})
-//    public ResponseEntity<LocalDate>getCheckOutDate(@PathVariable("id")Integer id,
-//                                                    @RequestBody Reservation reservation){
-//        return new ResponseEntity<LocalDate>(reservationService
-//                .getCheckOutDate(id,localDate),HttpStatus.OK);
-
+//    public String getCheckOutDate(@PathVariable("id")Integer id){
+//return new ResponseEntity<LocalDate>getCheckOutDate(reservationService
+//                .getReservationsByCustomerId(getCheckOutDate(id)));
 //    }
 }

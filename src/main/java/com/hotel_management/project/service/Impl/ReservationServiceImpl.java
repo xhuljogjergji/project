@@ -4,7 +4,6 @@ import com.hotel_management.project.dto.CheckOutDTO;
 import com.hotel_management.project.dto.ReservationDTO;
 import com.hotel_management.project.entity.Reservation;
 import com.hotel_management.project.entity.ReservationStatus;
-import com.hotel_management.project.entity.user.User;
 import com.hotel_management.project.exception.ResourceNotFoundException;
 import com.hotel_management.project.mapper.ReservationMapper;
 import com.hotel_management.project.repository.ReservationRepository;
@@ -34,7 +33,7 @@ private final UserService userService;
     }
 
     @Override
-    public List<ReservationDTO> getReservationsByCustomerId(String email) {
+    public Integer getReservationsByCustomerId(String email) {
         return reservationRepository.findAllByCustomerEmail(email)
                 .stream().map(ReservationMapper::toDto).collect(Collectors.toList());
 
@@ -73,7 +72,7 @@ private final UserService userService;
     }
 
     @Override
-    public ReservationDTO processOrder(Jwt jwt, CheckOutDTO ch) {
+    public ReservationDTO processReservation(Jwt jwt, CheckOutDTO ch) {
         return null;
     }
 
