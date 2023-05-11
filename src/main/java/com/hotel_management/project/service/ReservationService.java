@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ReservationService {
     List<ReservationDTO> getReservations();
-    Integer getReservationsByCustomerId(String email);
+    List<ReservationDTO> getReservationsByCustomerId(String email);
     Void setReservationStatus(Integer reservationId,String status);
     LocalDate getCheckInDate(Integer id);
     LocalDate getCheckOutDate(long stayingDays,LocalDate localDate,Integer id);

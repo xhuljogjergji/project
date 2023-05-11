@@ -33,7 +33,7 @@ private final UserService userService;
     }
 
     @Override
-    public Integer getReservationsByCustomerId(String email) {
+    public List<ReservationDTO> getReservationsByCustomerId(String email) {
         return reservationRepository.findAllByCustomerEmail(email)
                 .stream().map(ReservationMapper::toDto).collect(Collectors.toList());
 
