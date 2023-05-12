@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -32,7 +33,7 @@ public ResponseEntity<InvoiceDTO>getInvoice()
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<Integer> getReservationByCustomerEmail
+    public ResponseEntity<List<ReservationDTO>> getReservationByCustomerEmail
             (@PathVariable String email){
         return ResponseEntity.ok(reservationService.getReservationsByCustomerId(email));
     }
