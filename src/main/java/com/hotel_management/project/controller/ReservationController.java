@@ -7,6 +7,7 @@ import com.hotel_management.project.entity.Reservation;
 import com.hotel_management.project.service.InvoiceService;
 import com.hotel_management.project.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,15 +44,18 @@ public ResponseEntity<InvoiceDTO>getInvoice()
             ,@PathVariable String reservationStatus){
         return ResponseEntity.ok(reservationService.setReservationStatus(reservationId,reservationStatus));
     }
-    @GetMapping({"id"})
-    public ResponseEntity<LocalDate> getCheckInDate(@PathVariable("id") Integer id,
-                                                    @RequestBody Reservation reservation) {
-        return new ResponseEntity<LocalDate>(reservationService.getCheckInDate(id), HttpStatus.OK);
+    @PutMapping("/{id}/check-in-date")
+    public ResponseEntity<LocalDate> getCheckInDate(@PathVariable Integer id) {
+        LocalDate checkInDate = reservationService.getCheckInDate(id);
+        return ResponseEntity.ok(checkInDate);
     }
-
-//    @GetMapping({"id"})
-//    public String getCheckOutDate(@PathVariable("id")Integer id){
-//return new ResponseEntity<LocalDate>getCheckOutDate(reservationService
-//                .getReservationsByCustomerId(getCheckOutDate(id)));
-//    }
+@GetMapping("/{id}/check-out-date")
+public ResponseEntity<LocalDate> getCheckOutDate(@PathVariable Integer id,
+                                                 @RequestParam long stayingDays,
+                                                 @RequestParam @DateTimeFormat
+                                                         (iso = DateTimeFormat.ISO.DATE)
+                                                 LocalDate checkInDate) {
+    LocalDate checkOutDate = reservationService.getCheckOutDate(stayingDays, checkInDate, id);
+    return ResponseEntity.ok(checkOutDate);
+}
 }

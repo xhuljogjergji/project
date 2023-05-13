@@ -77,6 +77,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(sub).get();
     }
 
+    @Override
+    public UserDTO createUser(UserDTO req) {
+        User u=new User();
+        u.setFirstName(u.getFirstName());
+        u.setLastName(u.getLastName());
+        u.setEmail(u.getEmail());
+        u.setPassword(u.getPassword());
+        u.setRole(u.getRole());
+        userRepository.save(u);
+        return UserMapper.toDto(u);
+    }
+
 
 }
 

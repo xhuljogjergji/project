@@ -2,6 +2,7 @@ package com.hotel_management.project.service.Impl;
 
 import com.hotel_management.project.dto.InvoiceDTO;
 import com.hotel_management.project.entity.Invoice;
+import com.hotel_management.project.entity.Reservation;
 import com.hotel_management.project.exception.ResourceNotFoundException;
 import com.hotel_management.project.mapper.InvoiceMapper;
 import com.hotel_management.project.repository.InvoiceRepository;
@@ -9,6 +10,9 @@ import com.hotel_management.project.service.InvoiceService;
 import com.hotel_management.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static com.hotel_management.project.configuration.SecurityConfig.getJwt;
@@ -42,5 +46,4 @@ private final InvoiceRepository invoiceRepository;
     public InvoiceDTO getInvoice() {
         return InvoiceMapper.toDto((Invoice) userService.getUserFromToken(getJwt()).getInvoice());
     }
-
 }

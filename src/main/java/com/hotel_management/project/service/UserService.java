@@ -16,4 +16,6 @@ public interface UserService {
     UserUpdateDTO updateUser(UserUpdateDTO req,Integer id);
    void deleteUser(Integer id);
     User getUserFromToken(Jwt jwt);
+
+    UserDTO createUser(UserDTO req);
 }

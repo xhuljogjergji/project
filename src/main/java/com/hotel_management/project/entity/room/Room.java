@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @Data
 public class Room {
-    public int setStayingDays;
+    public long setStayingDays;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
